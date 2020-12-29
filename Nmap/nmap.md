@@ -94,5 +94,13 @@
 `--script`
 
 
+### How would you activate all of the scripts in the "vuln" category?
+`--script=vuln`
+
+
+## TASK 4 - [Scan Types] Overview 
+
+
+
 
 
