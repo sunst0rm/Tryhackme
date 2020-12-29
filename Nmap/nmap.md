@@ -129,7 +129,7 @@
 
 
 
-## TASK 7 - UDP Scans
+## TASK 7 - UDP Scans  
 
 ### If a UDP port doesn't respond to an Nmap scan, what will it be marked as? 
 `open|filtered`
