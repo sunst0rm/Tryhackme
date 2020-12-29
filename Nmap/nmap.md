@@ -98,7 +98,14 @@
 `--script=vuln`
 
 
-## TASK 4 - [Scan Types] Overview 
+## TASK 5 - TCP Connect Scans 
+
+### Which RFC defines the appropriate behaviour for the TCP protocol?
+`RFC 793`
+
+
+### If a port is closed, which flag should the server send back to indicate this?
+`RST`
 
 
 
