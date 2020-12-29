@@ -5,6 +5,10 @@
 `10.10.0.49`
 
 
+
+
+
+
 ## TASK 2 - Introduction
 
 ### What networking constructs are used to direct traffic to the right application on a server?
@@ -17,6 +21,8 @@
 
 ### [Research] How many of these are considered "well-known"? (These are the "standard" numbers mentioned in the task)
 `1024`
+
+
 
 
 ## TASK 3 - Nmap switches
@@ -98,6 +104,9 @@
 `--script=vuln`
 
 
+
+
+
 ## TASK 5 - TCP Connect Scans 
 
 ### Which RFC defines the appropriate behaviour for the TCP protocol?
@@ -109,5 +118,24 @@
 
 
 
+
+## TASK 6 - SYN Scans 
+
+###  There are two other names for a SYN scan, what are they?
+`stealth, half-open`
+
+### Can Nmap use a SYN scan without Sudo permissions (Y/N)?
+`no`
+
+
+
+## TASK 7 - UDP Scans
+
+### If a UDP port doesn't respond to an Nmap scan, what will it be marked as? 
+`open|filtered`
+
+
+### When a UDP port is closed, by convention the target should send back a "port unreachable" message. Which protocol would it use to do so?
+`icmp`
 
 
