@@ -151,3 +151,78 @@
 ### Which common OS may respond to a NULL, FIN or Xmas scan with a RST for every port?
 `microsoft windows`
 
+## TASK 9 - ICMP Network Scanning 
+
+###  How would you perform a ping sweep on the 172.16.x.x network (Netmask: 255.255.0.0) using Nmap? (CIDR notation)
+`nmap -sn 172.16.0.0/16`
+
+
+## TASK 10 - Overview 
+
+```
+There are many categories available. Some useful categories include:
+
+    safe:- Won't affect the target
+    intrusive:- Not safe: likely to affect the target
+    vuln:- Scan for vulnerabilities
+    exploit:- Attempt to exploit a vulnerability
+    auth:- Attempt to bypass authentication for running services (e.g. Log into an FTP server anonymously)
+    brute:- Attempt to bruteforce credentials for running services
+    discovery:- Attempt to query running services for further information about the network (e.g. query an SNMP server).
+
+```
+
+###  What language are NSE scripts written in?
+`lua`
+
+
+### Which category of scripts would be a very bad idea to run in a production environment?
+`intrusive`
+
+
+## TASK 11 - Working with the NSE scripts
+
+### What optional argument can the `ftp-anon.nse`script take?
+`maxlist`
+
+## TASK 12 - Searching for Scripts 
+
+### What is the filename of the script which determines the underlying OS of the SMB server?
+`smb-os-discovery.nse`
+
+
+### Read through this script. What does it depend on?
+`smb-brute`
+
+/usr/share/nmap/scripts/smb-os-discovery.nse
+
+## TASK 13 - Firewall Evasion 
+
+###  Which simple (and frequently relied upon) protocol is often blocked, requiring the use of the -Pn switch?
+`-Pn`
+
+### [Research] Which Nmap switch allows you to append an arbitrary length of random data to the end of packets?
+`-data-length`
+
+### TASK 14 - Practical
+
+### Does the target (MACHINE_IP)respond to ICMP (ping) requests (Y/N)?
+`no`
+
+### Perform an Xmas scan on the first 999 ports of the target -- how many ports are shown to be open or filtered?
+`999`
+
+### There is a reason given for this -- what is it?
+`no response`
+
+
+### Perform a TCP SYN scan on the first 5000 ports of the target -- how many ports are shown to be open?
+`5`
+
+
+### Deploy the ftp-anon script against the box. Can Nmap login successfully to the FTP server on port 21? (Y/N)
+`y`
+
+
+
+
