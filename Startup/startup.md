@@ -60,6 +60,7 @@ These ports are open:
 
 2. Secondly, it is always good to run gobuster to get a list of directories available and also check `/robots.txt` 
 
+ ```
  gobuster dir -u http://10.10.241.74 -w /usr/share/wordlists/dirb/common.txt ===============================================================
 Gobuster v3.0.1
 by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
@@ -82,6 +83,7 @@ by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
 ===============================================================
 2021/01/10 13:54:58 Finished
 ===============================================================
+```
 
 It seems that there is a directory `/files` however, after a quick look there is nothing helpful there. These are files visible from ftp, so we will benefir from it in next point.
                                                                        
