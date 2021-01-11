@@ -1,4 +1,6 @@
-### IP `10.10.241.74`
+IP `10.10.241.74`
+&nbsp;
+&nbsp;
 
 1. First of all and as always we run nmap:
 ```
