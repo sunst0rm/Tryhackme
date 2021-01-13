@@ -1,6 +1,7 @@
 #### IP `10.10.241.74`
 
 
+
 #### 1. First of all and as always we run nmap:
 ```
 ──(kali㉿kali)-[~]
