@@ -1,4 +1,4 @@
-#### 1. Scanning 
+#### 1. Nmap scan
 
 ```
 nmap -Pn -A 10.10.242.241
@@ -134,7 +134,7 @@ PORT    STATE SERVICE    VERSION
 ```
 
 Open ports are:
-- FTP 21 with already visible file there
+-FTP 21 with already visible file there
 -22
 -80
 -100,106,109,111,113,119,125
@@ -148,9 +148,9 @@ Thank you Gordon Lyon for creating nmap, because it found a clue itself:
 |_    http://localhost/key_rev_key <- You will find the key here!!!
 ```
 
-#### 2. Accessing  http://localhost/key_rev_key
+#### 2. Accessing `http://localhost/key_rev_key`
 
-I open a link, download a file and check what it is with `strings key_rev_key `:
+I open the link, download file and check what it is with `strings key_rev_key `:
 
 
 ```
@@ -196,7 +196,7 @@ Bingo, I found a key, so first flag is done.
 
 #### 3. FTP
 
-I access FTP, get a .jpg file, check it with steghide and extract a .txt file, however in the end it seems to be a rabbit hole:)
+I access FTP as Anonymous without password, get .jpg file, check it with steghide and extract .txt hidden inside it, however in the end it seems to be a rabbit hole, so do not repeat it :)
 
 ```
  ftp 10.10.242.241
@@ -209,11 +209,13 @@ Password:
 230 Login successful.
 Remote system type is UNIX.
 Using binary mode to transfer files.
+
 ftp> dir
 200 PORT command successful. Consider using PASV.
 150 Here comes the directory listing.
 -rw-rw-r--    1 1000     1000       208838 Sep 30 14:31 gum_room.jpg
 226 Directory send OK.
+
 ftp> get gum_room.jpg
 local: gum_room.jpg remote: gum_room.jpg
 200 PORT command successful. Consider using PASV.
