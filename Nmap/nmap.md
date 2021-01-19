@@ -6,9 +6,6 @@
 
 
 
-
-
-
 ## TASK 2 - Introduction
 
 ### What networking constructs are used to direct traffic to the right application on a server?
@@ -102,8 +99,6 @@
 
 ### How would you activate all of the scripts in the "vuln" category?
 `--script=vuln`
-
-
 
 
 
