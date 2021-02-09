@@ -514,3 +514,70 @@ It is a rabbit hole, as we do not get a number, so by converting it to decimal w
 Let's type it in program:
 
 ```
+./crackme7
+Menu:
+
+[1] Say hello
+[2] Add numbers
+[3] Quit
+
+[>] 2
+Enter first number: 122 105
+Enter second number: 122 + 105 = 227
+Menu:
+
+[1] Say hello
+[2] Add numbers
+[3] Quit
+
+[>] 31337
+Wow such h4x0r!
+flag{much_reversing_very_ida_wow}
+```                                           
+
+
+#### Crackme8
+
+This time I open file in ghidra and check source code of `main` function
+
+```
+undefined4 main(int param_1,undefined4 *param_2)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  
+  if (param_1 == 2) {
+    iVar2 = atoi((char *)param_2[1]);
+    if (iVar2 == -0x35010ff3) {
+      puts("Access granted.");
+      giveFlag();
+      uVar1 = 0;
+    }
+    else {
+      puts("Access denied.");
+      uVar1 = 1;
+    }
+  }
+  else {
+    printf("Usage: %s password\n",*param_2);
+    uVar1 = 1;
+  }
+  return uVar1;
+}
+```
+
+there is `atoi` which converts string to integer. 
+
+In our case value is compared to `-0x35010ff3` which converted to decimal is `-889262067`
+
+I run program with that number and get a flag
+
+```
+ ./crackme8 -889262067
+Access granted.
+flag{at_least_this_cafe_wont_leak_your_credit_card_numbers}
+                                                             
+```
+
+That was really interesting!
