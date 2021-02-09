@@ -486,3 +486,31 @@ Finally, we get these values:
 which decoded in cyberchef give a password:
 
 `1337_pwd`
+
+
+
+#### Crackme7
+
+This one is quick and simple.
+
+Like always, we read main so `pdf @main`
+
+and we see lots of function, however there is an interesting part:
+
+```
+│    0x08048665      3d697a0000     cmp eax, 0x7a69
+│ ││││ │┌─< 0x0804866a      7517           jne 0x8048683
+│ ││││ ││   0x0804866c      83ec0c         sub esp, 0xc
+│ ││││ ││   0x0804866f      68bc880408     push str.Wow_such_h4x0r_    ; 0x80488bc ; "Wow such h4x0r!"
+│ ││││ ││   0x08048674      e8f7fcffff     call sym.imp.puts           ; int puts(const char *s)
+│ ││││ ││   0x08048679      83c410         add esp, 0x10
+│ ││││ ││   0x0804867c      e825000000     call sym.giveFlag
+```
+
+Value we give is compared to `0x7a69` which converted from hex is `zi`
+
+It is a rabbit hole, as we do not get a number, so by converting it to decimal we get `31337`
+
+Let's type it in program:
+
+```
